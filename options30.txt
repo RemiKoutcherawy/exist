@@ -1,0 +1,6 @@
+INSTALL_PATH=/tmp/exist-3.0
+dataDir=/tmp/data-3.0
+divider=
+space=
+MAX_MEMORY=1024
+cacheSize=128
