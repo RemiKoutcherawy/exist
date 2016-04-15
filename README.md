@@ -36,7 +36,7 @@ Install
 Directories homeDir=/tmp/exist-3.0 dataDir=/tmp/data-3.0 are in options30.txt
 
 ```bash
-$ rm -rf /tmp/exist-3.0 dataDir=/tmp/data-3.0
+$ rm -rf /tmp/exist-3.0 /tmp/data-3.0
 $ java -jar installer/eXist-db-setup-3.0.RK-develop-fd7e45e.jar -options options30.txt
 $ cd /tmp/exist-3.0
 $ echo "sm:passwd('admin', 'mypassword')" | ./bin/client.sh -l -x -P \$adminPasswd
@@ -53,6 +53,8 @@ and login with the password you just set 'mypassword'
 
 Run from Eclipse
 --------------------------
+From Eclipse File/Import... /tmp/exist-rk
+
 - `Startup`:
    - Main class : org.exist.start.Main
    - Program arguments : jetty
@@ -60,8 +62,15 @@ Run from Eclipse
 - `Shutdown` (port 8080)
    - Main class : org.exist.start.Main
    - Program arguments : shutdown -u admin
-   - VM arguments : 
 - `Server`
    - Main class : org.exist.start.Main
    - Program arguments : standalone
-   - VM arguments : -Djetty.port=8088 -Dexist.home=/Users/remi/git/exist-rk
+   - VM arguments : -Djetty.port=8088 -Dexist.home=/tmp/exist-rk
+
+Clean
+--------------------------
+```bash
+$rm -rf /tmp/exist-3.0 /tmp/data-3.0 /tmp/exist-rk
+```
+
+
