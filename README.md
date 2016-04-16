@@ -33,11 +33,13 @@ $ ./build.sh installer
 
 Install
 --------------------------
-Directories homeDir=/tmp/exist-3.0 dataDir=/tmp/data-3.0 are in options30.txt
+Directories are in options30.txt:
+- appDir=/tmp/exist-3.0 
+- dataDir=/tmp/data-3.0 
 
 ```bash
 $ rm -rf /tmp/exist-3.0 /tmp/data-3.0
-$ java -jar installer/eXist-db-setup-3.0.RK-develop-fd7e45e.jar -options options30.txt
+$ java -jar installer/eXist-db-setup-3.0.RK-develop-32326a4.jar -options options30.txt
 $ cd /tmp/exist-3.0
 $ echo "sm:passwd('admin', 'mypassword')" | ./bin/client.sh -l -x -P \$adminPasswd
 ```
@@ -49,28 +51,34 @@ $ ./bin/startup.sh &
 ```
 
 Open [Localhost](http://localhost:8080/)
-and login with the password you just set 'mypassword'
+and log in with the password you just set 'mypassword'
 
 Run from Eclipse
 --------------------------
 From Eclipse File/Import... /tmp/exist-rk
+Directories default to:
+- appDir=/tmp/exist-rk/
+- dataDir=/tmp/exist-rk/webapp/WEB-INF/data
 
-- `Startup`:
+Launch with Eclipse `Run configurations...` :
+- `ExistStartup` : [8080](http://localhost:8080/)
    - Main class : org.exist.start.Main
    - Program arguments : jetty
-   - VM arguments : -Dexist.home=/tmp/exist-rk
-- `Shutdown` (port 8080)
+- `ExistShutdown` : [port 8080]
    - Main class : org.exist.start.Main
    - Program arguments : shutdown -u admin
-- `Server`
+   
+- `Server` : [8088](http://localhost:8088/)
    - Main class : org.exist.start.Main
    - Program arguments : standalone
-   - VM arguments : -Djetty.port=8088 -Dexist.home=/tmp/exist-rk
-
+- `ServerShutdown` : [port 8088]
+   - Main class : org.exist.start.Main
+   - Program arguments : shutdown --uri=xmldb:exist://localhost:8088/xmlrpc
+   
 Clean
 --------------------------
 ```bash
-$rm -rf /tmp/exist-3.0 /tmp/data-3.0 /tmp/exist-rk
+$ rm -rf /tmp/exist-3.0 /tmp/data-3.0 /tmp/exist-rk
 ```
 
 
