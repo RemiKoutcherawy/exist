@@ -3,7 +3,6 @@
 .exist_query_history
 .idea/workspace.xml
 /backup/
-autodeploy/
 build/intellij
 classes/
 client.properties
@@ -11,6 +10,7 @@ conf.xml
 data/
 descriptor.xml
 dist/
+eXist.iws
 examples.jar
 exist-optional.jar
 exist-testkit.jar
@@ -18,10 +18,8 @@ eXist.iws
 exist.jar
 extensions/**/build/
 extensions/contentextraction/lib/
-extensions/debuggee/lib
-extensions/indexes/lucene/lib/
 extensions/lib/
-extensions/modules/cqlparser/lib
+# extensions/indexes/lucene/lib/
 extensions/modules/lib/
 extensions/modules/memcached/lib
 extensions/modules/simpleql/src/main/java/org/exist/xquery/modules/simpleql/SimpleQLLexer.java
