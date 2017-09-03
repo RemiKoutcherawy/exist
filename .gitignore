@@ -20,7 +20,7 @@ exist.jar
 extensions/**/build/
 extensions/contentextraction/lib/
 extensions/lib/
-extensions/indexes/lucene/lib/
+# extensions/indexes/lucene/lib/
 extensions/modules/lib/
 extensions/security/oauth/lib/
 extensions/security/openid/lib/
@@ -75,3 +75,7 @@ webapp/xqts/config.xml
 tools/yajsw/logs/wrapper.log
 tools/yajsw/logs/wrapper.log.lck
 Project_Default.xml
+file:/
+tools/jetty/work/
+tools/yajsw/logs/
+tools/yajsw/work/
