@@ -75,6 +75,7 @@ webapp/xqts/config.xml
 tools/yajsw/logs/wrapper.log
 tools/yajsw/logs/wrapper.log.lck
 Project_Default.xml
+file:/
 tools/jetty/work/
 tools/yajsw/logs/
 tools/yajsw/work/
