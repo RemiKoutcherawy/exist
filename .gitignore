@@ -49,7 +49,7 @@ lib/user/je*.jar
 lib/user/sequence-library-*.jar
 lib/user/svnkit*.jar
 lib/user/uuid*.jar
-local.*
+# local.*
 mime-types.xml
 nbproject/build/
 nbproject/private/
