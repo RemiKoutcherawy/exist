@@ -70,48 +70,35 @@ public class CacheFunctions extends BasicFunction {
             "Explicitly create a cache with a specific configuration",
             returns(Type.BOOLEAN, "true if the cache was created, false if the cache already exists"),
             FS_PARAM_CACHE_NAME,
-            param("config", Type.MAP, "A map with configuration for the cache. At present cache LRU and permission groups may be specified, for operations on the cache. `maximumSize` is optional and specifies the maximum number of entries. `expireAfterAccess` is optional and specified the expiry period for infrequently accessed entries (in milliseconds). If a permission group is not specified for an operation, then permissions are not checked for that operation. Should have the format: map { \"maximumSize\": 1000, \"expireAfterAccess\": 120000, \"permissions\": map { \"put-group\": \"group1\", \"get-group\": \"group2\", \"remove-group\": \"group3\", \"clear-group\": \"group4\"} }")
-    );
-
-    private static final String FS_NAMES_NAME = "names";
-    static final FunctionSignature FS_NAMES = functionSignature(
-            FS_NAMES_NAME,
-            "Get the names of all current caches",
-            returnsOptMany(Type.STRING, "The names of all caches currently in use.")
+            param("config", Type.MAP, "A map with configuration for the cache. At present cache LRU and permission groups may be specified, for operations on the cache. `maximumSize` is optional and specifies the maximum number of entries. `expireAfterAccess` is optional and specified the expiry period for infrequently accessed entries (in milliseconds). If a permission group is not specified for an operation, then permissions are not checked for that operation. Should have the format: { maximumSize: 1000, expireAfterAccess: 120000, permissions: { \"put-group\": \"group1\", \"get-group\": \"group2\", \"remove-group\": \"group3\", \"clear-group\": \"group4\"} }")
     );
 
     private static final String FS_PUT_NAME = "put";
     static final FunctionSignature FS_PUT = functionSignature(
             FS_PUT_NAME,
             "Put data with a key into the identified cache. Returns the previous value associated with the key",
-            returnsOptMany(Type.ITEM, "The previous value associated with the key"),
+            returnsOptMany(Type.ANY_TYPE, "The previous value associated with the key"),
             FS_PARAM_CACHE_NAME,
             FS_PARAM_KEY,
-            optManyParam("value", Type.ITEM, "The value")
+            optManyParam("key", Type.ANY_TYPE, "The value")
     );
 
-    private static final String FS_LIST_NAME = "list";
-    static final FunctionSignature FS_LIST = functionSignature(
-            FS_LIST_NAME,
-            "List all values (for the associated keys) stored in a cache.",
-            returnsOptMany(Type.ITEM, "The values associated with the keys"),
-            FS_PARAM_CACHE_NAME,
-            optManyParam("keys", Type.ANY_TYPE, "The keys, if none are specified, all values are returned")
-    );
-
-    private static final String FS_KEYS_NAME = "keys";
-    static final FunctionSignature FS_KEYS = functionSignature(
-            FS_KEYS_NAME,
-            "List all keys stored in a cache. Note this operation is expensive.",
-            returnsOptMany(Type.STRING, "The keys in the cache. Note these will be returned in serialized string form, as that is used internally."),
-            FS_PARAM_CACHE_NAME
-    );
+    @Deprecated private static final String FS_LIST_NAME = "list";
+    @Deprecated static final FunctionSignature FS_LIST = deprecated(
+            "Deprecated as the operation is expensive.",
+            functionSignature(
+                FS_LIST_NAME,
+                "List all keys stored in a cache",
+                returnsOptMany(Type.ANY_TYPE, "The values associated with the keys"),
+                FS_PARAM_CACHE_NAME,
+                optManyParam("keys", Type.ANY_TYPE, "The keys, if none are specified, all values are returned")
+        ));
 
     private static final String FS_GET_NAME = "get";
     static final FunctionSignature FS_GET = functionSignature(
             FS_GET_NAME,
             "Get data from identified global cache by key",
-            returnsOptMany(Type.ITEM, "The value associated with the key"),
+            returnsOptMany(Type.ANY_TYPE, "The value associated with the key"),
             FS_PARAM_CACHE_NAME,
             FS_PARAM_KEY
     );
@@ -119,8 +106,8 @@ public class CacheFunctions extends BasicFunction {
     private static final String FS_REMOVE_NAME = "remove";
     static final FunctionSignature FS_REMOVE = functionSignature(
             FS_REMOVE_NAME,
-            "Remove data from the identified cache by the key. Returns the value that was previously associated with key",
-            returnsOptMany(Type.ITEM, "The value that was previously associated with the key"),
+            "Remove data from the identified cache by the key. Returns the value that was associated with key",
+            returnsOptMany(Type.ANY_TYPE, "The value that was associated with the key"),
             FS_PARAM_CACHE_NAME,
             FS_PARAM_KEY
     );
@@ -136,22 +123,6 @@ public class CacheFunctions extends BasicFunction {
                             FS_PARAM_CACHE_NAME
                     )
             )
-    );
-
-    private static final String FS_CLEANUP_NAME = "cleanup";
-    static final FunctionSignature FS_CLEANUP = functionSignature(
-            FS_CLEANUP_NAME,
-            "Eviction policy work of the cache is performed asynchronously. Performs any pending maintenance operations needed by the cache, on the current thread. Typically not needed by users, and only used for testing scenarios. Requires 'clear' permissions.",
-            returnsNothing(),
-            FS_PARAM_CACHE_NAME
-    );
-
-    private static final String FS_DESTROY_NAME = "destroy";
-    static final FunctionSignature FS_DESTROY = functionSignature(
-            FS_DESTROY_NAME,
-            "Destroys a cache entirely",
-            returnsNothing(),
-            FS_PARAM_CACHE_NAME
     );
 
     public CacheFunctions(final XQueryContext context, final FunctionSignature signature) {
@@ -183,9 +154,6 @@ public class CacheFunctions extends BasicFunction {
                 }
                 return BooleanValue.valueOf(createCache(cacheName, extractCacheConfig((MapType)args[1])));
 
-            case FS_NAMES_NAME:
-                return cacheNames();
-
             case FS_PUT_NAME:
                 // lazy create cache if it doesn't exist
                 if(!CacheModule.caches.containsKey(cacheName)) {
@@ -202,13 +170,6 @@ public class CacheFunctions extends BasicFunction {
                 }
                 final String[] keys = toMapKeys(args[1]);
                 return list(cacheName, keys);
-
-            case FS_KEYS_NAME:
-                // lazy create cache if it doesn't exist
-                if(!CacheModule.caches.containsKey(cacheName)) {
-                    createCache(cacheName, new CacheConfig());
-                }
-                return listKeys(cacheName);
 
             case FS_GET_NAME:
                 // lazy create cache if it doesn't exist
@@ -236,22 +197,6 @@ public class CacheFunctions extends BasicFunction {
                        // only clear the cache if it exists
                        clear(cacheName);
                     }
-                }
-                return Sequence.EMPTY_SEQUENCE;
-
-            case FS_CLEANUP_NAME:
-                if(CacheModule.caches.containsKey(cacheName)) {
-                    // only cleanup the cache if it exists
-                    cleanup(cacheName);
-                }
-                return Sequence.EMPTY_SEQUENCE;
-
-            case FS_DESTROY_NAME:
-                // destroy specific cache
-                final Cache oldCache = CacheModule.caches.remove(cacheName);
-                if(oldCache != null) {
-                    // only clear the cache after we have removed it
-                    oldCache.clear();
                 }
                 return Sequence.EMPTY_SEQUENCE;
 
@@ -308,14 +253,6 @@ public class CacheFunctions extends BasicFunction {
         return newOrExisting.getConfig() == config;
     }
 
-    private Sequence cacheNames() throws XPathException {
-        final Sequence result = new ValueSequence();
-        for(final String cacheName : CacheModule.caches.keySet()) {
-            result.add(new StringValue(cacheName));
-        }
-        return result;
-    }
-
     private Sequence put(final String cacheName, final String key, final Sequence value) throws XPathException {
         final Cache cache = CacheModule.caches.get(cacheName);
 
@@ -346,22 +283,6 @@ public class CacheFunctions extends BasicFunction {
         }
 
         return cache.list(keys);
-    }
-
-    private Sequence listKeys(final String cacheName) throws XPathException {
-        final Cache cache = CacheModule.caches.get(cacheName);
-
-        // check permissions
-        if(!context.getEffectiveUser().hasDbaRole()) {
-            final Optional<String> getGroup = cache.getConfig().getPermissions().flatMap(CacheConfig.Permissions::getGetGroup);
-            if (getGroup.isPresent()) {
-                if (!context.getEffectiveUser().hasGroup(getGroup.get())) {
-                    throw new XPathException(this, INSUFFICIENT_PERMISSIONS, "User does not have the appropriate permissions to list data in this cache");
-                }
-            }
-        }
-
-        return cache.listKeys();
     }
 
     private Sequence get(final String cacheName, final String key) throws XPathException {
@@ -431,22 +352,6 @@ public class CacheFunctions extends BasicFunction {
         }
 
         cache.clear();
-    }
-
-    private void cleanup(final String cacheName) throws XPathException {
-        final Cache cache = CacheModule.caches.get(cacheName);
-
-        // check permissions
-        if(!context.getEffectiveUser().hasDbaRole()) {
-            final Optional<String> clearGroup = cache.getConfig().getPermissions().flatMap(CacheConfig.Permissions::getClearGroup);
-            if (clearGroup.isPresent()) {
-                if (!context.getEffectiveUser().hasGroup(clearGroup.get())) {
-                    throw new XPathException(this, INSUFFICIENT_PERMISSIONS, "User does not have the appropriate permissions to clear data from this cache");
-                }
-            }
-        }
-
-        cache.cleanup();
     }
 
     private String toMapKey(final Sequence key) throws XPathException {

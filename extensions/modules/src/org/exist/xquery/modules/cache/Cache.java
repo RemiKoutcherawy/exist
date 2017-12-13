@@ -3,7 +3,6 @@ package org.exist.xquery.modules.cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.exist.xquery.XPathException;
 import org.exist.xquery.value.Sequence;
-import org.exist.xquery.value.StringValue;
 import org.exist.xquery.value.ValueSequence;
 
 import java.util.Arrays;
@@ -59,14 +58,6 @@ class Cache {
         return values;
     }
 
-    public Sequence listKeys() throws XPathException {
-        final ValueSequence keys = new ValueSequence();
-	    for(final String key : store.asMap().keySet()) {
-            keys.add(new StringValue(key));
-        }
-        return keys;
-    }
-
     public Sequence get(final String key) {
 	    final Sequence value = store.getIfPresent(key);
 	    if(value == null) {
@@ -87,9 +78,5 @@ class Cache {
 
     public void clear() {
         store.invalidateAll();
-    }
-
-    public void cleanup() {
-	    store.cleanUp();
     }
 }
