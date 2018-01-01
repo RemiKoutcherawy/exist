@@ -1115,7 +1115,7 @@ public class NativeValueIndex implements ContentLoadingObserver {
 
     @Override
     public void printStatistics() {
-        dbValues.printStatistics();
+//        dbValues.printStatistics();
     }
 
     @Override

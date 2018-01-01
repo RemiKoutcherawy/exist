@@ -1383,25 +1383,25 @@ public class DOMFile extends BTree implements Lockable {
 
     @Override
     public void printStatistics() {
-        super.printStatistics();
-        final NumberFormat nf1 = NumberFormat.getPercentInstance();
-        final NumberFormat nf2 = NumberFormat.getInstance();
-        final StringBuilder buf = new StringBuilder();
-        buf.append(FileUtils.fileName(getFile())).append(" DATA ");
-        buf.append("Buffers occupation : ");
-        if (dataCache.getBuffers() == 0 && dataCache.getUsedBuffers() == 0) {
-            buf.append("N/A");
-        } else {
-            buf.append(nf1.format(dataCache.getUsedBuffers()/(float)dataCache.getBuffers()));
-        }
-        buf.append(" (").append(nf2.format(dataCache.getUsedBuffers())).append(" out of ").append(nf2.format(dataCache.getBuffers())).append(")");
-        buf.append(" Cache efficiency : ");
-        if (dataCache.getHits() == 0 && dataCache.getFails() == 0) {
-            buf.append("N/A");
-        } else {
-            buf.append(nf1.format(dataCache.getHits()/(float)(dataCache.getFails() + dataCache.getHits())));
-        }
-        LOGSTATS.info(buf.toString());
+//        super.printStatistics();
+//        final NumberFormat nf1 = NumberFormat.getPercentInstance();
+//        final NumberFormat nf2 = NumberFormat.getInstance();
+//        final StringBuilder buf = new StringBuilder();
+//        buf.append(FileUtils.fileName(getFile())).append(" DATA ");
+//        buf.append("Buffers occupation : ");
+//        if (dataCache.getBuffers() == 0 && dataCache.getUsedBuffers() == 0) {
+//            buf.append("N/A");
+//        } else {
+//            buf.append(nf1.format(dataCache.getUsedBuffers()/(float)dataCache.getBuffers()));
+//        }
+//        buf.append(" (").append(nf2.format(dataCache.getUsedBuffers())).append(" out of ").append(nf2.format(dataCache.getBuffers())).append(")");
+//        buf.append(" Cache efficiency : ");
+//        if (dataCache.getHits() == 0 && dataCache.getFails() == 0) {
+//            buf.append("N/A");
+//        } else {
+//            buf.append(nf1.format(dataCache.getHits()/(float)(dataCache.getFails() + dataCache.getHits())));
+//        }
+//        LOGSTATS.info(buf.toString());
     }
 
     public BufferStats getDataBufferStats() {

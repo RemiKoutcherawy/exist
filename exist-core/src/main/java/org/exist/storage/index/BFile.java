@@ -384,28 +384,28 @@ public class BFile extends BTree {
 
     @Override
     public void printStatistics() {
-        super.printStatistics();
-        final NumberFormat nf = NumberFormat.getPercentInstance();
-        final StringBuilder buf = new StringBuilder();
-        buf.append(FileUtils.fileName(getFile())).append(" DATA ");
-        buf.append("Buffers occupation : ");
-        if (dataCache.getBuffers() == 0 && dataCache.getUsedBuffers() == 0) {
-            buf.append("N/A");
-        } else {
-            buf.append(nf.format(dataCache.getUsedBuffers()/(float)dataCache.getBuffers()));
-        }
-        buf.append(" (").append(dataCache.getUsedBuffers()).append(" out of ").append(dataCache.getBuffers()).append(")");
-        //buf.append(dataCache.getBuffers()).append(" / ");
-        //buf.append(dataCache.getUsedBuffers()).append(" / ");
-        buf.append(" Cache efficiency : ");
-        if (dataCache.getHits() == 0 && dataCache.getFails() == 0) {
-            buf.append("N/A");
-        } else {
-            buf.append(nf.format(dataCache.getHits()/(float)(dataCache.getHits() + dataCache.getFails())));
-        }
-        //buf.append(dataCache.getHits()).append(" / ");
-        //buf.append(dataCache.getFails());
-        LOGSTATS.info(buf.toString());
+//        super.printStatistics();
+//        final NumberFormat nf = NumberFormat.getPercentInstance();
+//        final StringBuilder buf = new StringBuilder();
+//        buf.append(FileUtils.fileName(getFile())).append(" DATA ");
+//        buf.append("Buffers occupation : ");
+//        if (dataCache.getBuffers() == 0 && dataCache.getUsedBuffers() == 0) {
+//            buf.append("N/A");
+//        } else {
+//            buf.append(nf.format(dataCache.getUsedBuffers()/(float)dataCache.getBuffers()));
+//        }
+//        buf.append(" (").append(dataCache.getUsedBuffers()).append(" out of ").append(dataCache.getBuffers()).append(")");
+//        //buf.append(dataCache.getBuffers()).append(" / ");
+//        //buf.append(dataCache.getUsedBuffers()).append(" / ");
+//        buf.append(" Cache efficiency : ");
+//        if (dataCache.getHits() == 0 && dataCache.getFails() == 0) {
+//            buf.append("N/A");
+//        } else {
+//            buf.append(nf.format(dataCache.getHits()/(float)(dataCache.getHits() + dataCache.getFails())));
+//        }
+//        //buf.append(dataCache.getHits()).append(" / ");
+//        //buf.append(dataCache.getFails());
+//        LOGSTATS.info(buf.toString());
     }
 
     /**

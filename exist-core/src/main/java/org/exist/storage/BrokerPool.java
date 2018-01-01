@@ -1315,7 +1315,7 @@ public class BrokerPool extends BrokerPools implements BrokerPoolConstants, Data
 
             //guard to ensure that the broker has popped all its subjects
             if(lastUser == null || broker.getCurrentSubject() != null) {
-                LOG.warn("Broker " + broker.getId() + " was returned with extraneous Subjects, cleaning...", new IllegalStateException("DBBroker pushSubject/popSubject mismatch").fillInStackTrace());
+//                LOG.warn("Broker " + broker.getId() + " was returned with extraneous Subjects, cleaning...", new IllegalStateException("DBBroker pushSubject/popSubject mismatch").fillInStackTrace());
                 if(LOG.isTraceEnabled()) {
                     broker.traceSubjectChanges();
                 }
