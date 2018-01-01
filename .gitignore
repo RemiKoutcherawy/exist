@@ -20,7 +20,7 @@ exist.jar
 extensions/**/build/
 extensions/contentextraction/lib/
 extensions/lib/
-# extensions/indexes/lucene/lib/
+#extensions/indexes/lucene/lib/
 extensions/modules/lib/
 extensions/security/oauth/lib/
 extensions/security/openid/lib/
@@ -39,7 +39,7 @@ lib/user/je*.jar
 lib/user/sequence-library-*.jar
 lib/user/svnkit*.jar
 lib/user/uuid*.jar
-# local.*
+#local.*
 mime-types.xml
 nbproject/build/
 nbproject/private/
@@ -75,7 +75,3 @@ webapp/xqts/config.xml
 tools/yajsw/logs/wrapper.log
 tools/yajsw/logs/wrapper.log.lck
 Project_Default.xml
-tools/jetty/work/
-tools/yajsw/logs/
-tools/yajsw/work/
-data-3.5
