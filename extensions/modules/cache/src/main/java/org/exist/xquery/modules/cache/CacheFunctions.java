@@ -70,7 +70,7 @@ public class CacheFunctions extends BasicFunction {
             "Explicitly create a cache with a specific configuration",
             returns(Type.BOOLEAN, "true if the cache was created, false if the cache already exists"),
             FS_PARAM_CACHE_NAME,
-            param("config", Type.MAP, "A map with configuration for the cache. At present cache LRU and permission groups may be specified, for operations on the cache. `maximumSize` is optional and specifies the maximum number of entries. `expireAfterAccess` is optional and specified the expiry period for infrequently accessed entries (in milliseconds). If a permission group is not specified for an operation, then permissions are not checked for that operation. Should have the format: { maximumSize: 1000, expireAfterAccess: 120000, permissions: { \"put-group\": \"group1\", \"get-group\": \"group2\", \"remove-group\": \"group3\", \"clear-group\": \"group4\"} }")
+            param("config", Type.MAP, "A map with configuration for the cache. At present cache LRU and permission groups may be specified, for operations on the cache. `maximumSize` is optional and specifies the maximum number of entries. `expireAfterAccess` is optional and specified the expiry period for infrequently accessed entries (in milliseconds). If a permission group is not specified for an operation, then permissions are not checked for that operation. Should have the format: map { \"maximumSize\": 1000, \"expireAfterAccess\": 120000, \"permissions\": map { \"put-group\": \"group1\", \"get-group\": \"group2\", \"remove-group\": \"group3\", \"clear-group\": \"group4\"} }")
     );
 
     private static final String FS_NAMES_NAME = "names";
@@ -84,38 +84,34 @@ public class CacheFunctions extends BasicFunction {
     static final FunctionSignature FS_PUT = functionSignature(
             FS_PUT_NAME,
             "Put data with a key into the identified cache. Returns the previous value associated with the key",
-            returnsOptMany(Type.ANY_TYPE, "The previous value associated with the key"),
+            returnsOptMany(Type.ITEM, "The previous value associated with the key"),
             FS_PARAM_CACHE_NAME,
             FS_PARAM_KEY,
-            optManyParam("key", Type.ANY_TYPE, "The value")
+            optManyParam("value", Type.ITEM, "The value")
     );
 
-    @Deprecated private static final String FS_LIST_NAME = "list";
-    @Deprecated static final FunctionSignature FS_LIST = deprecated(
-            "Deprecated as the operation is expensive.",
-            functionSignature(
-                FS_LIST_NAME,
-                "List all values (for the associated keys) stored in a cache",
-                returnsOptMany(Type.ANY_TYPE, "The values associated with the keys"),
-                FS_PARAM_CACHE_NAME,
-                optManyParam("keys", Type.ANY_TYPE, "The keys, if none are specified, all values are returned")
-        ));
+    private static final String FS_LIST_NAME = "list";
+    static final FunctionSignature FS_LIST = functionSignature(
+            FS_LIST_NAME,
+            "List all values (for the associated keys) stored in a cache.",
+            returnsOptMany(Type.ITEM, "The values associated with the keys"),
+            FS_PARAM_CACHE_NAME,
+            optManyParam("keys", Type.ANY_TYPE, "The keys, if none are specified, all values are returned")
+    );
 
-    @Deprecated private static final String FS_LIST_KEYS_NAME = "list-keys";
-    @Deprecated static final FunctionSignature FS_LIST_KEYS = deprecated(
-            "Deprecated as the operation is expensive.",
-            functionSignature(
-                    FS_LIST_KEYS_NAME,
-                    "List all keys stored in a cache",
-                    returnsOptMany(Type.STRING, "The keys in the cache. Note these will be returned in serialized string form, as that is used internally."),
-                    FS_PARAM_CACHE_NAME
-            ));
+    private static final String FS_KEYS_NAME = "keys";
+    static final FunctionSignature FS_KEYS = functionSignature(
+            FS_KEYS_NAME,
+            "List all keys stored in a cache. Note this operation is expensive.",
+            returnsOptMany(Type.STRING, "The keys in the cache. Note these will be returned in serialized string form, as that is used internally."),
+            FS_PARAM_CACHE_NAME
+    );
 
     private static final String FS_GET_NAME = "get";
     static final FunctionSignature FS_GET = functionSignature(
             FS_GET_NAME,
             "Get data from identified global cache by key",
-            returnsOptMany(Type.ANY_TYPE, "The value associated with the key"),
+            returnsOptMany(Type.ITEM, "The value associated with the key"),
             FS_PARAM_CACHE_NAME,
             FS_PARAM_KEY
     );
@@ -123,8 +119,8 @@ public class CacheFunctions extends BasicFunction {
     private static final String FS_REMOVE_NAME = "remove";
     static final FunctionSignature FS_REMOVE = functionSignature(
             FS_REMOVE_NAME,
-            "Remove data from the identified cache by the key. Returns the value that was associated with key",
-            returnsOptMany(Type.ANY_TYPE, "The value that was associated with the key"),
+            "Remove data from the identified cache by the key. Returns the value that was previously associated with key",
+            returnsOptMany(Type.ITEM, "The value that was previously associated with the key"),
             FS_PARAM_CACHE_NAME,
             FS_PARAM_KEY
     );
@@ -140,6 +136,14 @@ public class CacheFunctions extends BasicFunction {
                             FS_PARAM_CACHE_NAME
                     )
             )
+    );
+
+    private static final String FS_CLEANUP_NAME = "cleanup";
+    static final FunctionSignature FS_CLEANUP = functionSignature(
+            FS_CLEANUP_NAME,
+            "Eviction policy work of the cache is performed asynchronously. Performs any pending maintenance operations needed by the cache, on the current thread. Typically not needed by users, and only used for testing scenarios. Requires 'clear' permissions.",
+            returnsNothing(),
+            FS_PARAM_CACHE_NAME
     );
 
     private static final String FS_DESTROY_NAME = "destroy";
@@ -199,7 +203,7 @@ public class CacheFunctions extends BasicFunction {
                 final String[] keys = toMapKeys(args[1]);
                 return list(cacheName, keys);
 
-            case FS_LIST_KEYS_NAME:
+            case FS_KEYS_NAME:
                 // lazy create cache if it doesn't exist
                 if(!CacheModule.caches.containsKey(cacheName)) {
                     createCache(cacheName, new CacheConfig());
@@ -232,6 +236,13 @@ public class CacheFunctions extends BasicFunction {
                        // only clear the cache if it exists
                        clear(cacheName);
                     }
+                }
+                return Sequence.EMPTY_SEQUENCE;
+
+            case FS_CLEANUP_NAME:
+                if(CacheModule.caches.containsKey(cacheName)) {
+                    // only cleanup the cache if it exists
+                    cleanup(cacheName);
                 }
                 return Sequence.EMPTY_SEQUENCE;
 
@@ -420,6 +431,22 @@ public class CacheFunctions extends BasicFunction {
         }
 
         cache.clear();
+    }
+
+    private void cleanup(final String cacheName) throws XPathException {
+        final Cache cache = CacheModule.caches.get(cacheName);
+
+        // check permissions
+        if(!context.getEffectiveUser().hasDbaRole()) {
+            final Optional<String> clearGroup = cache.getConfig().getPermissions().flatMap(CacheConfig.Permissions::getClearGroup);
+            if (clearGroup.isPresent()) {
+                if (!context.getEffectiveUser().hasGroup(clearGroup.get())) {
+                    throw new XPathException(this, INSUFFICIENT_PERMISSIONS, "User does not have the appropriate permissions to clear data from this cache");
+                }
+            }
+        }
+
+        cache.cleanup();
     }
 
     private String toMapKey(final Sequence key) throws XPathException {
