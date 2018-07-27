@@ -18,14 +18,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package xquery.modules.cache;
+package org.exist.management.impl;
 
-import org.exist.test.runner.XSuite;
-import org.junit.runner.RunWith;
+import java.util.List;
 
-@RunWith(XSuite.class)
-@XSuite.XSuiteFiles({
-    "test/src/xquery/modules/cache"
-})
-public class CacheTests {
+public interface BinaryValuesMXBean {
+    List<BinaryInputStreamCacheInfo> getCacheInstances();
 }

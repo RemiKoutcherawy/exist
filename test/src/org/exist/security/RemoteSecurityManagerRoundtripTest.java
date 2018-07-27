@@ -1,6 +1,6 @@
 /*
  * eXist Open Source Native XML Database
- * Copyright (C) 2001-2017 The eXist Project
+ * Copyright (C) 2001-2018 The eXist Project
  * http://exist-db.org
  *
  * This program is free software; you can redistribute it and/or
@@ -18,14 +18,28 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package xquery.modules.cache;
+package org.exist.security;
 
-import org.exist.test.runner.XSuite;
-import org.junit.runner.RunWith;
+import org.exist.test.ExistWebServer;
+import org.junit.ClassRule;
 
-@RunWith(XSuite.class)
-@XSuite.XSuiteFiles({
-    "test/src/xquery/modules/cache"
-})
-public class CacheTests {
+/**
+ * Security Manager round trip tests against the XML:DB Remote API
+ *
+ * @author Adam Retter <adam@exist-db.org>
+ */
+public class RemoteSecurityManagerRoundtripTest extends AbstractSecurityManagerRoundtripTest {
+
+    @ClassRule
+    public static final ExistWebServer existWebServer = new ExistWebServer(true, false, true, true);
+
+    @Override
+    protected String getBaseUri() {
+        return "xmldb:exist://localhost:" + Integer.toString(existWebServer.getPort()) + "/xmlrpc";
+    }
+
+    @Override
+    protected void restartServer() {
+        existWebServer.restart();
+    }
 }

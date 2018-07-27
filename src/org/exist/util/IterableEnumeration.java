@@ -1,6 +1,6 @@
 /*
  * eXist Open Source Native XML Database
- * Copyright (C) 2001-2017 The eXist Project
+ * Copyright (C) 2001-2018 The eXist Project
  * http://exist-db.org
  *
  * This program is free software; you can redistribute it and/or
@@ -18,14 +18,30 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package xquery.modules.cache;
+package org.exist.util;
 
-import org.exist.test.runner.XSuite;
-import org.junit.runner.RunWith;
+import java.util.Enumeration;
+import java.util.Iterator;
 
-@RunWith(XSuite.class)
-@XSuite.XSuiteFiles({
-    "test/src/xquery/modules/cache"
-})
-public class CacheTests {
+/**
+ * Adapter class from Iterable<T> to Enumeration<T>
+ *
+ * @author Adam Retter <adam.retter@googlemail.com>
+ */
+public class IterableEnumeration<T> implements Enumeration<T> {
+    private final Iterator<T> iterator;
+
+    public IterableEnumeration(final Iterable<T> iterable) {
+        this.iterator = iterable.iterator();
+    }
+
+    @Override
+    public boolean hasMoreElements() {
+        return iterator.hasNext();
+    }
+
+    @Override
+    public T nextElement() {
+        return iterator.next();
+    }
 }
