@@ -110,6 +110,7 @@
       <excludeFolder url="file://$MODULE_DIR$/extensions/exquery/modules/request/build" />
       <excludeFolder url="file://$MODULE_DIR$/extensions/exquery/restxq/build" />
       <excludeFolder url="file://$MODULE_DIR$/extensions/images" />
+      <excludeFolder url="file://$MODULE_DIR$/extensions/indexes/spatial/src/main/java/org/exist" />
       <excludeFolder url="file://$MODULE_DIR$/extensions/metadata" />
       <excludeFolder url="file://$MODULE_DIR$/extensions/modules/src/org/exist/xquery/modules/cqlparser" />
       <excludeFolder url="file://$MODULE_DIR$/extensions/modules/src/org/exist/xquery/modules/memcached" />
