@@ -116,7 +116,7 @@ public class QuartzSchedulerImpl implements Scheduler, BrokerPoolService {
         defaultQuartzProperties.setProperty(PROP_SCHED_RMI_EXPORT, "false");
         defaultQuartzProperties.setProperty(PROP_SCHED_RMI_PROXY, "false");
         defaultQuartzProperties.setProperty(PROP_SCHED_WRAP_JOB_IN_USER_TX, "false");
-//        defaultQuartzProperties.setProperty(PROP_THREAD_POOL_CLASS, "org.exist.scheduler.impl.ExistQuartzSimpleThreadPool");
+        defaultQuartzProperties.setProperty(PROP_THREAD_POOL_CLASS, "org.exist.scheduler.impl.ExistQuartzSimpleThreadPool");
         defaultQuartzProperties.setProperty("org.quartz.threadPool.threadCount", "4");
         defaultQuartzProperties.setProperty("org.quartz.threadPool.threadPriority", "5");
         defaultQuartzProperties.setProperty("org.quartz.threadPool.threadsInheritGroupOfInitializingThread", "true");
