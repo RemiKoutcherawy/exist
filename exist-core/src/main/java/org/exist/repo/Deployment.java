@@ -287,7 +287,7 @@ public class Deployment {
     }
 
     private void checkProcessorVersion(final PackageLoader.Version version) throws PackageException {
-        final String procVersion = SystemProperties.getInstance().getSystemProperty("product-version", "1.0");
+        final String procVersion = SystemProperties.getInstance().getSystemProperty("product-version", "4.8");
 
         final DependencyVersion depVersion = version.getDependencyVersion();
         if (!depVersion.isCompatible(procVersion)) {
