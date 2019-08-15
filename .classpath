@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="extensions/debuggee/lib/mina-core-2.0.5.jar"/>
+<!-- 	
+<classpathentry kind="lib" path="extensions/debuggee/lib/mina-core-2.0.5.jar"/> 
+-->
 	<classpathentry kind="lib" path="extensions/expath/lib/http-client-java-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="extensions/expath/lib/tools-java-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="extensions/exquery/lib/exquery-annotations-common-0.1.34.jar"/>
@@ -131,8 +133,10 @@
 	<classpathentry kind="src" path="exist-start/src/main/java"/>
 	<classpathentry kind="src" path="exist-testkit/src/main/java"/>
 	<classpathentry kind="src" path="extensions/commands/src/main/java"/>
-	<classpathentry kind="src" path="extensions/debuggee/src/main/java"/>
-	<classpathentry kind="src" path="extensions/debuggee/src/test/java"/>
+<!--
+<classpathentry kind="src" path="extensions/debuggee/src/main/java"/>
+<classpathentry kind="src" path="extensions/debuggee/src/test/java"/>
+-->
 	<classpathentry kind="src" path="extensions/expath/src/main/java"/>
 	<classpathentry kind="src" path="extensions/exquery/restxq/src/main/java"/>
 	<classpathentry kind="src" path="extensions/fluent/src/main/java"/>
